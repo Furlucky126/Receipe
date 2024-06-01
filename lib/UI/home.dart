@@ -72,8 +72,45 @@ class _HomePageState extends State<HomePage> {
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Profile Page'),
+    return Container(
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+
+      margin: EdgeInsets.only(top: 40),
+              height: 120,
+              width: 120,
+              child: CircleAvatar(
+                backgroundImage: NetworkImage('https://scontent.fktm9-2.fna.fbcdn.net/v/t39.30808-1/358427942_1505305030274494_5771678048894344973_n.jpg?stp=dst-jpg_p200x200&_nc_cat=104&ccb=1-7&_nc_sid=5740b7&_nc_ohc=YbJfX_V0bLwAX-pjwmW&_nc_ht=scontent.fktm9-2.fna&oh=00_AfBFIlcl7XoIr99qFnK-pbw4jyil4bs0g483486hdGRSrA&oe=65B7A8B5'),
+              ),
+            ),
+          ),
+          const Padding(
+
+            padding:  EdgeInsets.all(8.0),
+            child: SizedBox(
+              child: Text('Lucky Sherpa', style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold
+              ),),
+            ),
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          const Text('Follow Me',style: TextStyle(
+            fontSize: 25
+          ),),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(onPressed: (){}, icon: Icon(Icons.facebook, size: 40,),),
+              IconButton(onPressed: (){}, icon: Icon(Icons.snapchat, size: 40,)),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
@@ -110,7 +147,7 @@ class Recipe {
 final List<Recipe> recipes = [
   Recipe(
     name: 'Spaghetti Bolognese',
-    description: 'Classic Italian pasta dish',
+    description: 'Classic Italian pasta dish Heat olive oil and soften onion, carrots, and celery. Add garlic and browned ground beef, then simmer in red wine (optional), crushed tomatoes, tomato paste, herbs, and spices. Let simmer for at least 30 minutes, toss with cooked spaghetti, and garnish with parsley and Parmesan. Enjoy!',
     imagePath: 'assets/1.jpg',
   ),
   Recipe(
@@ -144,22 +181,25 @@ class RecipeCard extends StatelessWidget {
     return Card(
       // margin: EdgeInsets.all(16),
       elevation: 3,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Image.network(
-            imageurl,
-            height: 200,
-            fit: BoxFit.cover,
-          ),
-          Padding(
-            padding: EdgeInsets.all(7),
-            child: Text(
-              content,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      child: Container(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Image.network(
+              imageurl,
+              height: 200,
+              fit: BoxFit.cover,
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                content,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
