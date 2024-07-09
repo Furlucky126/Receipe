@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "177203382250",
+    "project_id": "receipebooks-69ffb",
+    "storage_bucket": "receipebooks-69ffb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177203382250:android:1f2a3f78ee84cfa1ccd493",
+        "android_client_info": {
+          "package_name": "com.example.receipebook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGjjbQS6FxO97mzeRKKxPCBL8W9SV50a4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
