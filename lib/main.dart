@@ -1,12 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:receipebook/UI/TabBar/AddPage.dart';
 import 'package:receipebook/UI/home.dart' as Home;
+import 'package:receipebook/editprofile.dart';
 import 'package:receipebook/pages/login/login_view.dart';
+import 'package:receipebook/pages/profile.dart';
 import 'package:receipebook/pages/signup/signup_view.dart';
-import 'pages/FormPage.dart';
-import 'UI/services/MyListScreen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:receipebook/search.dart';
+import 'package:receipebook/splashscreen.dart';
+
 
 late final FirebaseApp app;
 late final FirebaseAuth auth;
@@ -57,12 +61,19 @@ Future<void> main() async {
 
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: LoginView(),
+    home: const LoginView(),
     routes: {
       'register': (context) => const SignUpView(),
       'login': (context) => const LoginView(),
-      'home': (context) => Home.HomePage(),
+      'home': (context) => const Home.HomePage(),
+      'screen': (context) => const Search(),
+      'splashscreen': (context) => const Splashscreen(),
+      'editprofile': (context) => const EditProfile(),
+      'search': (context) => Search(),
+      'add': (context) => AddPage(),
+      
        // Use the prefix for HomePage
     },
   ));
+
 }
