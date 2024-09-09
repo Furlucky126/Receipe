@@ -69,12 +69,12 @@ class _LoginViewState extends State<LoginView> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 40),
+                      const SizedBox(height: 40),
                       ElevatedButton(
                         onPressed: () => _controller.signIn(context),
                         child: Text(
                           'Sign In',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 27,
                             fontWeight: FontWeight.w700,
@@ -82,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blueAccent,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 30,
                             vertical: 10,
                           ),
@@ -97,9 +97,9 @@ class _LoginViewState extends State<LoginView> {
                         children: [
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, 'register');
+                              Navigator.popAndPushNamed(context, 'register');
                             },
-                            child: Text(
+                            child: const Text(
                               'Sign Up',
                               textAlign: TextAlign.left,
                               style: TextStyle(

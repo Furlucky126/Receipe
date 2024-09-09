@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 class FormPage extends StatefulWidget {
   const FormPage({super.key});
 
@@ -16,10 +17,7 @@ class _FormPageState extends State<FormPage> {
   File? _selectedImage;
 
 /* firebase storage reference initialized  */
-  Reference storageReference = FirebaseStorage.instance
-      .ref()
-      .child('images');
-
+  Reference storageReference = FirebaseStorage.instance.ref().child('images');
 
   // Form fields
   final TextEditingController _nameController = TextEditingController();
@@ -28,7 +26,6 @@ class _FormPageState extends State<FormPage> {
 
   //firestore initialization
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +69,7 @@ class _FormPageState extends State<FormPage> {
             ),
 
             // Submit button
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 // addDataToFirebase();
@@ -85,7 +82,6 @@ class _FormPageState extends State<FormPage> {
       ),
     );
   }
-
 
   Future<void> addDataToFirebase() async {
     try {
@@ -109,8 +105,10 @@ class _FormPageState extends State<FormPage> {
       throw error;
     }
   }
+
   Future<void> _pickImage() async {
-    final pickedFile = await _imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 65);
+    final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 65);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
@@ -118,20 +116,18 @@ class _FormPageState extends State<FormPage> {
     }
   }
 
-  Future<void> uploadImageToFirebaseStorage(
-      File imagePath) async {
+  Future<void> uploadImageToFirebaseStorage(File imagePath) async {
     try {
+      var uploadTask =
+          storageReference.child('${DateTime.now()}.jpg').putFile(imagePath);
 
-      var uploadTask = storageReference.child('${DateTime.now()}.jpg').putFile(imagePath);
-
-      String downloadURL =
-      await (await uploadTask).ref.getDownloadURL();
+      String downloadURL = await (await uploadTask).ref.getDownloadURL();
 
       await firestore.collection('User').add({
         'imageURL': downloadURL,
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
-        'phone' : _phoneController.text.trim()
+        'phone': _phoneController.text.trim()
       });
 
       print('Image uploaded and URL saved to Fire store successfully.');
@@ -139,5 +135,4 @@ class _FormPageState extends State<FormPage> {
       print('Error uploading image or saving URL to Fire store: $error');
     }
   }
-
 }

@@ -12,9 +12,10 @@ class LoginController {
 
   Future<void> signIn(BuildContext context) async {
     _errorText = null;
-    String result = await AuthService().signIn(emailController.text, passwordController.text);
+    String result = await AuthService()
+        .signIn(emailController.text, passwordController.text);
     if (result == "Success") {
-      Navigator.pushReplacementNamed(context, 'home');
+      Navigator.popAndPushNamed(context, 'home');
     } else {
       _errorText = "Invalid email or password";
       print("Failed");

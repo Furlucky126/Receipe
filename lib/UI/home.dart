@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:receipebook/UI/receipedetail.dart';
 import 'package:receipebook/UI/services/MyListScreen.dart';
 import 'package:receipebook/pages/profile.dart';
 import 'package:receipebook/search.dart';
@@ -76,7 +77,7 @@ class Recipe {
   });
 }
 
-class RecipeCard extends StatelessWidget {
+class RecipeCard extends StatefulWidget {
   final String? imageurl;
   final String? content;
   final Recipe? recipe;
@@ -84,59 +85,126 @@ class RecipeCard extends StatelessWidget {
   const RecipeCard({this.imageurl, this.content, this.recipe});
 
   @override
+  State<RecipeCard> createState() => _RecipeCardState();
+}
+
+class _RecipeCardState extends State<RecipeCard> {
+  bool isLiked = false;
+  bool isSaved = false;
+  @override
   Widget build(BuildContext context) {
-    print(content);
-    return Card(
-      margin: EdgeInsets.all(8),
-      elevation: 3,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: recipe?.userProfileImage != null &&
-                      recipe!.userProfileImage.isNotEmpty
-                  ? NetworkImage(recipe!.userProfileImage)
-                  : AssetImage('assets/1.jpg') as ImageProvider,
-            ),
-            title: Text(recipe?.userName ?? 'Unknown User',
-                overflow: TextOverflow.ellipsis),
-          ),
-          if (imageurl != null && imageurl!.isNotEmpty)
-            Image.network(
-              imageurl!,
-              height: MediaQuery.sizeOf(context).height * 0.3,
-              fit: BoxFit.cover,
-            )
-          else
-            Container(
-              height: 150,
-              color: Colors.grey[300],
-              child: Center(
+    print(widget.content);
+
+    return InkWell(
+      splashColor: Colors.red,
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => Receipedetail(
+              content: widget.content ?? 'no content',
+              imagePath: widget.imageurl!,
+              title: widget.recipe!.description),
+        ));
+      },
+      child: Card(
+        // margin: const EdgeInsets.all(8),
+        elevation: 3,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: widget.recipe?.userProfileImage != null &&
+                          widget.recipe!.userProfileImage.isNotEmpty
+                      ? NetworkImage(widget.recipe!.userProfileImage)
+                      : AssetImage('assets/1.jpg') as ImageProvider,
+                ),
+                title: Text(widget.recipe?.userName ?? 'Unknown User',
+                    overflow: TextOverflow.ellipsis),
+              ),
+              if (widget.imageurl != null && widget.imageurl!.isNotEmpty)
+                Image.network(
+                  widget.imageurl!,
+                  height: MediaQuery.sizeOf(context).height * 0.38,
+                  fit: BoxFit.cover,
+                )
+              else
+                Container(
+                  height: 120,
+                  color: Colors.grey[300],
+                  child: const Center(
+                    child: Text(
+                      'No Image Available',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  'No Image Available',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  widget.recipe?.name ?? 'No Recipe Name',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              recipe?.name ?? 'No Recipe Name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  widget.recipe?.description ?? 'No Description Available',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    // flex: 3\,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          isLiked = !isLiked;
+                        });
+                      },
+                      label: Text(
+                        'Like',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isLiked ? Colors.orange : Colors.black),
+                      ),
+                      icon: Icon(
+                        Icons.thumb_up,
+                        color: isLiked ? Colors.orange : Colors.black,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          isSaved = !isSaved;
+                        });
+                      },
+                      label: Text(
+                        'Save',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isSaved ? Colors.deepPurple : Colors.black),
+                      ),
+                      icon: Icon(
+                        Icons.bookmark,
+                        color: isSaved ? Colors.deepPurple : Colors.black,
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              recipe?.description ?? 'No Description Available',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -158,7 +226,7 @@ class MyListScreen extends StatelessWidget {
           } else {
             List<DocumentSnapshot> documents = snapshot.data!.docs;
             return documents.isEmpty
-                ? Center(child: Text("Empty Data"))
+                ? const Center(child: Text("Empty Data"))
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GridView.builder(
@@ -173,18 +241,22 @@ class MyListScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         Map<String, dynamic> data =
                             documents[index].data() as Map<String, dynamic>;
-                        return RecipeCard(
-                          imageurl: data["imageURL"] as String?,
-                          content: data["content"] as String?,
-                          recipe: Recipe(
-                            name: data["name"] ?? 'No Name',
-                            description:
-                                data["description"] ?? 'No description',
-                            imagePath: data["imagePath"] ?? '',
-                            likes: data["likes"] ?? 0,
-                            saved: data["saved"] ?? false,
-                            userProfileImage: data["userProfileImage"] ?? '',
-                            userName: data["userName"] ?? 'Anonymous',
+                        // print(data.entries);
+                        return InkWell(
+                          splashColor: Colors.orange,
+                          onTap: () {},
+                          child: RecipeCard(
+                            imageurl: data["imageURL"] as String?,
+                            content: data["title"] as String?,
+                            recipe: Recipe(
+                              name: data["title"] ?? 'No Namee',
+                              description: data["content"] ?? 'No description',
+                              imagePath: data["imagePath"] ?? '',
+                              likes: data["likes"] ?? 0,
+                              saved: data["saved"] ?? false,
+                              userProfileImage: data["userProfileImage"] ?? '',
+                              userName: data["userName"] ?? 'Anonymous',
+                            ),
                           ),
                         );
                       },
