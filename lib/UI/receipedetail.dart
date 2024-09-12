@@ -16,7 +16,7 @@ class Receipedetail extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.orange,
         foregroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           'Receipe Detail',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -48,7 +48,7 @@ class Receipedetail extends StatelessWidget {
                     color: Colors.orange),
               ),
             ),
-            Padding(
+            const Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Text(
                   'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an ...'),

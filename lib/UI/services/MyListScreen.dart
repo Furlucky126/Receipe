@@ -18,35 +18,37 @@ class MyListScreen extends StatelessWidget {
             return Text('Error: ${snapshot.error}');
           } else {
             List<DocumentSnapshot> documents = snapshot.data!.docs;
-            return documents.isEmpty 
-              ? Center(child: Text("Empty Data"))
-              : Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1, // Set the number of columns you want
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
+            return documents.isEmpty
+                ? Center(child: Text("Empty Data"))
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 1, // Set the number of columns you want
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                      ),
+                      itemCount: documents.length,
+                      itemBuilder: (context, index) {
+                        Map<String, dynamic> data =
+                            documents[index].data() as Map<String, dynamic>;
+                        return RecipeCard(
+                          imageurl: data["imageURL"],
+                          content: data["content"],
+                          recipe: Recipe(
+                              name: data["name"] ?? '',
+                              description: data["description"],
+                              imagePath: data["imagePath"],
+                              likes: data["likes"],
+                              saved: data["saved"],
+                              userProfileImage: data["userProfileImage"],
+                              userName: data["userName"],
+                              isLiked: data["isLiked"]),
+                        );
+                      },
                     ),
-                    itemCount: documents.length,
-                    itemBuilder: (context, index) {
-                      Map<String, dynamic> data = documents[index].data() as Map<String, dynamic>;
-                      return RecipeCard(
-                        imageurl: data["imageURL"],
-                        content: data["content"],
-                        recipe: Recipe(
-                          name: data["name"] ?? '',
-                          description: data["description"],
-                          imagePath: data["imagePath"],
-                          likes: data["likes"],
-                          saved: data["saved"],
-                          userProfileImage: data["userProfileImage"],
-                          userName: data["userName"],
-                        ),
-                      );
-                    },
-                  ),
-                );
+                  );
           }
         },
       ),

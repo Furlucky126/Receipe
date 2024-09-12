@@ -29,18 +29,18 @@ class _AddPageState extends State<AddPage> {
     return Center(
       child: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 50),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Add Receipe !',
                 style: TextStyle(
                     fontSize: 30,
-                    color: Colors.deepPurple,
+                    color: Color.fromARGB(255, 255, 121, 59),
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 28),
+              const SizedBox(height: 28),
               if (_selectedImage != null)
                 Image.file(
                   _selectedImage!,
@@ -48,28 +48,32 @@ class _AddPageState extends State<AddPage> {
                   width: MediaQuery.of(context).size.width,
                   fit: BoxFit.cover,
                 ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
                 children: [
                   Expanded(
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStateProperty.all<Color>(Colors.orange),
-                              shape: WidgetStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)))),
-                          onPressed: _pickImage,
-                          child: Text(
-                            'Pick Image',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          )))
+                      child: SizedBox(
+                    height: 58,
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all<Color>(Colors.orange),
+                            shape:
+                                WidgetStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5)))),
+                        onPressed: _pickImage,
+                        child: const Text(
+                          'Pick Image',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        )),
+                  ))
                 ],
               ),
               // ElevatedButton(
@@ -116,30 +120,33 @@ class _AddPageState extends State<AddPage> {
               Row(
                 children: [
                   Expanded(
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  WidgetStateProperty.all<Color>(Colors.orange),
-                              shape: WidgetStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)))),
-                          onPressed: () {
-                            uploadImageToFirebaseStorage(_selectedImage!).then(
-                              (value) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text('Added SuccesFully')));
-                              },
-                            );
-                          },
-                          child: Text(
-                            'Submit',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                          )))
+                      child: SizedBox(
+                    height: 70,
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all<Color>(Colors.orange),
+                            shape:
+                                WidgetStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5)))),
+                        onPressed: () {
+                          uploadImageToFirebaseStorage(_selectedImage!).then(
+                            (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Added SuccesFully')));
+                            },
+                          );
+                        },
+                        child: const Text(
+                          'Submit',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        )),
+                  ))
                 ],
               ),
               // ElevatedButton(

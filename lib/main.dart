@@ -5,20 +5,16 @@ import 'package:receipebook/UI/TabBar/AddPage.dart';
 import 'package:receipebook/UI/home.dart' as Home;
 import 'package:receipebook/editprofile.dart';
 import 'package:receipebook/pages/login/login_view.dart';
-import 'package:receipebook/pages/profile.dart';
 import 'package:receipebook/pages/signup/signup_view.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:receipebook/search.dart';
 import 'package:receipebook/splashscreen.dart';
-
 
 late final FirebaseApp app;
 late final FirebaseAuth auth;
 Position? pos;
 
 Future<void> main() async {
-
-
   WidgetsFlutterBinding.ensureInitialized();
   app = await Firebase.initializeApp();
   auth = FirebaseAuth.instanceFor(app: app);
@@ -58,7 +54,6 @@ Future<void> main() async {
   // continue accessing the position of the device.
   pos = await Geolocator.getCurrentPosition();
 
-
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: const LoginView(),
@@ -71,9 +66,8 @@ Future<void> main() async {
       'editprofile': (context) => const EditProfile(),
       'search': (context) => Search(),
       'add': (context) => AddPage(),
-      
-       // Use the prefix for HomePage
+
+      // Use the prefix for HomePage
     },
   ));
-
 }

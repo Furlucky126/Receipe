@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:receipebook/UI/TabBar/appbar.dart';
 import 'package:receipebook/UI/receipedetail.dart';
 import 'package:receipebook/UI/services/MyListScreen.dart';
 import 'package:receipebook/pages/profile.dart';
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("DishDash")),
+      appBar: const MyAppbar(),
       body: _getPage(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -43,11 +44,11 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return MyListScreen();
       case 1:
-        return Search();
+        return const Search();
       case 2:
         return AddPage();
       case 3:
-        return ProfilePage(
+        return const ProfilePage(
             username: 'lucky Sherpa',
             profileImageUrl: '',
             email: 'user@example.com');
@@ -65,6 +66,7 @@ class Recipe {
   final bool saved;
   final String userProfileImage;
   final String userName;
+  final bool? isLiked;
 
   Recipe({
     required this.name,
@@ -74,6 +76,7 @@ class Recipe {
     required this.saved,
     required this.userProfileImage,
     required this.userName,
+    this.isLiked,
   });
 }
 
@@ -81,16 +84,27 @@ class RecipeCard extends StatefulWidget {
   final String? imageurl;
   final String? content;
   final Recipe? recipe;
+  final bool? isLiked;
+  final String? id;
 
-  const RecipeCard({this.imageurl, this.content, this.recipe});
+  const RecipeCard(
+      {this.imageurl, this.content, this.recipe, this.isLiked, this.id});
 
   @override
   State<RecipeCard> createState() => _RecipeCardState();
 }
 
 class _RecipeCardState extends State<RecipeCard> {
-  bool isLiked = false;
   bool isSaved = false;
+
+  Future<void> checkboxChange(bool value, String id) async {
+    // print(value);
+    await FirebaseFirestore.instance
+        .collection('Post')
+        .doc(id)
+        .update({'isLiked': value});
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.content);
@@ -165,19 +179,27 @@ class _RecipeCardState extends State<RecipeCard> {
                     // flex: 3\,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        setState(() {
-                          isLiked = !isLiked;
-                        });
+                        if (widget.id != null) {
+                          if (widget.isLiked == true) {
+                            checkboxChange(false, widget.id!);
+                          } else {
+                            checkboxChange(true, widget.id!);
+                          }
+                        }
                       },
                       label: Text(
                         'Like',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isLiked ? Colors.orange : Colors.black),
+                            color: widget.isLiked ?? false
+                                ? Colors.blue
+                                : Colors.black),
                       ),
                       icon: Icon(
                         Icons.thumb_up,
-                        color: isLiked ? Colors.orange : Colors.black,
+                        color: widget.isLiked ?? false
+                            ? Colors.blue
+                            : Colors.black,
                       ),
                     ),
                   ),
@@ -248,12 +270,16 @@ class MyListScreen extends StatelessWidget {
                           child: RecipeCard(
                             imageurl: data["imageURL"] as String?,
                             content: data["title"] as String?,
+                            isLiked: data['isLiked'] as bool?,
+                            id: snapshot.data!.docs[index].id.toString()
+                                as String?,
                             recipe: Recipe(
                               name: data["title"] ?? 'No Namee',
                               description: data["content"] ?? 'No description',
                               imagePath: data["imagePath"] ?? '',
                               likes: data["likes"] ?? 0,
                               saved: data["saved"] ?? false,
+                              isLiked: data['isLiked'],
                               userProfileImage: data["userProfileImage"] ?? '',
                               userName: data["userName"] ?? 'Anonymous',
                             ),
