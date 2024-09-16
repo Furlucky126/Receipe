@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:receipebook/pages/login/login_view.dart';
 
@@ -26,47 +27,52 @@ class ProfilePage extends StatelessWidget {
             const CircleAvatar(
               radius: 50,
               backgroundImage: NetworkImage(
-                  'https://scontent.fktm14-1.fna.fbcdn.net/v/t39.30808-6/358427942_1505305030274494_5771678048894344973_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=tHK0nqdCZ-0Q7kNvgGtki97&_nc_ht=scontent.fktm14-1.fna&_nc_gid=A5ZepVxa8QsvhgzQ4sbs7gq&oh=00_AYAmui_lcbmOUjowHHx2uvlPmAvVxvezOTxX-JTBqxYCbA&oe=66E505B7'),
+                  'https://i.redd.it/i-got-bored-so-i-decided-to-draw-a-random-image-on-the-v0-4ig97vv85vjb1.png?width=1280&format=png&auto=webp&s=7177756d1f393b6e093596d06e1ba539f723264b'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               username,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               email,
               style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             const SizedBox(height: 24),
             Padding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 25,
               ),
               child: Column(
                 children: [
-                  Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: const Icon(Icons.edit),
-                      title: const Text('Edit Profile'),
-                      onTap: () {
-                        // Navigate to edit profile page
-                      },
-                    ),
+                  const SizedBox(
+                    height: 120,
                   ),
+                  // Card(
+                  //   elevation: 4,
+                  //   margin: const EdgeInsets.symmetric(vertical: 8),
+                  //   child: ListTile(
+                  //     leading: const Icon(Icons.edit),
+                  //     title: const Text('Edit Profile'),
+                  //     onTap: () {
+                  //       // Navigate to edit profile page
+                  //     },
+                  //   ),
+                  // ),
                   Card(
                     elevation: 4,
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
                       leading: const Icon(Icons.lock),
                       title: const Text('Change Password'),
-                      onTap: () {
+                      onTap: () async {
                         // Navigator.pushNamed(context, '/change_password');
                         // Navigate to change password page
+                        await forgotPassword(
+                            email: FirebaseAuth.instance.currentUser!.email!);
                       },
                     ),
                   ),
@@ -91,5 +97,16 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+Future forgotPassword({required String email}) async {
+  FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  try {
+    await _firebaseAuth.sendPasswordResetEmail(email: email);
+  } on FirebaseAuthException catch (err) {
+    throw Exception(err.message.toString());
+  } catch (err) {
+    throw Exception(err.toString());
   }
 }

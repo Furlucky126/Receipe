@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Search extends StatefulWidget {
@@ -34,7 +35,6 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Column(
         children: [
           Padding(
@@ -69,5 +69,15 @@ class _SearchState extends State<Search> {
   }
 }
 
-void main() => runApp(MaterialApp(home: Search()));
+Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+    getRecipesStartingWith(String letter) async {
+  final query = FirebaseFirestore.instance
+      .collection('post')
+      .where('name', isEqualTo: letter);
 
+  final querySnapshot = await query.get();
+
+  return querySnapshot.docs;
+}
+
+void main() => runApp(MaterialApp(home: Search()));

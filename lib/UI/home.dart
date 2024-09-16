@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:receipebook/UI/TabBar/appbar.dart';
@@ -48,10 +49,10 @@ class _HomePageState extends State<HomePage> {
       case 2:
         return AddPage();
       case 3:
-        return const ProfilePage(
+        return ProfilePage(
             username: 'lucky Sherpa',
             profileImageUrl: '',
-            email: 'user@example.com');
+            email: FirebaseAuth.instance.currentUser!.email!);
       default:
         return MyListScreen();
     }
