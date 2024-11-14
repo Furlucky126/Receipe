@@ -10,31 +10,50 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   final TextEditingController _searchController = TextEditingController();
-  List<String> _recipes = ["Spaghetti", "Tacos", "Pizza", "Sushi"];
-  List<String> _filteredRecipes = [];
+  List<Map<String, dynamic>> _filteredRecipes = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _filteredRecipes = _recipes;
+    _searchRecipes(""); // Optionally, fetch all recipes initially.
   }
 
-  void _searchRecipes(String query) {
-    final filtered = _recipes.where((recipe) {
-      final recipeLower = recipe.toLowerCase();
-      final queryLower = query.toLowerCase();
-
-      return recipeLower.contains(queryLower);
-    }).toList();
-
+  Future<void> _searchRecipes(String query) async {
     setState(() {
-      _filteredRecipes = filtered;
+      _isLoading = true;
     });
+
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('post')
+          .where('title', isGreaterThanOrEqualTo: query)
+          .where('title', isLessThanOrEqualTo: query + '\uf8ff')
+          .get();
+
+      setState(() {
+        _filteredRecipes = querySnapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
+      });
+    } catch (e) {
+      print("Error searching recipes: $e");
+      setState(() {
+        _filteredRecipes = [];
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Search Recipes'),
+      ),
       body: Column(
         children: [
           Padding(
@@ -42,42 +61,44 @@ class _SearchState extends State<Search> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Search by ingredients or food name',
+                labelText: 'Search by food name',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
-              onChanged: _searchRecipes,
+              onChanged: (query) {
+                _searchRecipes(query); // Search when text changes.
+              },
             ),
           ),
           Expanded(
-            child: _filteredRecipes.isNotEmpty
-                ? ListView.builder(
-                    itemCount: _filteredRecipes.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(_filteredRecipes[index]),
-                      );
-                    },
-                  )
-                : Center(
-                    child: Text('Not available recipes yet.'),
-                  ),
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : _filteredRecipes.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: _filteredRecipes.length,
+                        itemBuilder: (context, index) {
+                          final recipe = _filteredRecipes[index];
+                          return ListTile(
+                            leading: recipe['imageUrl'] != null
+                                ? Image.network(recipe['imageUrl'], width: 50, height: 50)
+                                : Icon(Icons.fastfood),
+                            title: Text(recipe['title']),
+                            subtitle: Text(recipe['content'] ?? 'No description'),
+                            trailing: Icon(
+                              recipe['isLike'] ? Icons.favorite : Icons.favorite_border,
+                              color: recipe['isLike'] ? Colors.red : null,
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text('No recipes found.'),
+                      ),
           ),
         ],
       ),
     );
   }
-}
-
-Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
-    getRecipesStartingWith(String letter) async {
-  final query = FirebaseFirestore.instance
-      .collection('post')
-      .where('name', isEqualTo: letter);
-
-  final querySnapshot = await query.get();
-
-  return querySnapshot.docs;
 }
 
 void main() => runApp(MaterialApp(home: Search()));

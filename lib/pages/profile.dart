@@ -49,7 +49,7 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(
-                    height: 120,
+                    height: 40,
                   ),
                   // Card(
                   //   elevation: 4,
